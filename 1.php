@@ -143,6 +143,6 @@ class hiddifyApi
     }
 }
 
-$api = new hiddifyApi('https://sus-1.senpai-like-you.autos', 'u1ixLfIaGlcy3bcbolkNy', 'fbac8b45-e518-4b35-affb-9d93b9637806');
-var_dump($api->getUserList());
-// var_dump($api->getUserdetais('9d82b181-0ffe-4ebf-98d9-e2699c59428f'));
+$api = new hiddifyApi('https://domain.com', '', '');
+var_dump($api);
+
