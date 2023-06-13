@@ -4,7 +4,7 @@
 
   ``API`` 
 
-  - [x]  Get User List(minor )
+  - [x]  Get User List(Can`t show page 1<)
   - [x]  Add User 
   - [x]  Get system stats 
   - [x]  Get user details
