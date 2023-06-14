@@ -1,4 +1,6 @@
-# hiddify-api
+<h1>Hiddify-PHP-API</h1>
+
+#### This is a third-party library for [Hiddify](https://github.com/hiddify)
 
 ## 💡 Usage :
 
