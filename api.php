@@ -1,34 +1,122 @@
 <?php
-error_reporting(E_ALL ^ E_WARNING);
 class hiddifyApi
 {
     private $mainUrl, $path, $adminPath;
-    // private $systemStats = $mainUrl ."get_data/";
+    protected $urlUser, $urlAdmin;
+    public $user;
 
-    function __construct($mainUrl, $path, $adminPath)
+    function __construct($mainUrl, $path, $adminSecret)
     {
 
-        $url = $mainUrl . '/' . $path . '/' . $adminPath . '/admin/get_data/';
-        $response = json_decode(file_get_contents($url), true);
+        $this->urlUser = $mainUrl . '/' . $path . '/';
+        $this->urlAdmin = $mainUrl . '/' . $path . '/' . $adminSecret . '/';
 
-        $this->mainUrl = $mainUrl;
-        $this->path = $path;
-        $this->adminPath = $adminPath;
-
-        if (!is_array($response)) {
-            die('Can`t connect to hiddify');
-        }
-        //! return system stats
-        return $response;
+        $this->user = new User($mainUrl, $path, $adminSecret);
     }
 
-    public function getUserdetais($uuid): array
+    public function is_connected(): bool
     {
-        $url = $this->mainUrl . '/' . $this->path . '/' . $uuid . '/all.txt';
-        // $url = $mainUrl.'/all.txt';
+        $url = $this->urlAdmin . 'admin/get_data/';
+        $response = json_decode(file_get_contents($url), true);
+        $retVal = (is_array($response)) ? true : false;
+        return $retVal;
+    }
+
+    public function getSystemStats($ret_json = false): mixed
+    {
+        $url = $this->urlAdmin . 'admin/get_data/';
+
+        if ($ret_json == true) {
+            $response = file_get_contents($url);
+            return $response;
+        } else {
+            $response = json_decode(file_get_contents($url), true);
+            return $response['stats'];
+        }
+    }
+
+    protected function generateRandomUUID(): string
+    {
+        $data = openssl_random_pseudo_bytes(16);
+        $data[6] = chr(ord($data[6]) & 0x0f | 0x40);
+        $data[8] = chr(ord($data[8]) & 0x3f | 0x80);
+        return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($data), 4));
+    }
+}
+
+
+class User extends hiddifyApi
+{
+    protected $adminSecret;
+
+    public function __construct($mainUrl, $path, $adminSecret)
+    {
+        $this->adminSecret = $adminSecret;
+        $this->urlUser = $mainUrl . '/' . $path . '/';
+        $this->urlAdmin = $mainUrl . '/' . $path . '/' . $adminSecret . '/';
+    }
+
+    public function getUserList(): array
+    {
+        $url = $this->urlAdmin . 'api/v1/user/';
+        $data = json_decode(file_get_contents($url), true);
+        return $data;
+    }
+
+    public function addUser(string $name, int $package_days = 30, int $package_size = 30, string $telegram_id = null, string $comment = null)
+    {
+        $url = $this->urlAdmin . 'api/v1/user/';
+
+        $headers = array(
+            'Accept: application/json',
+            'Content-Type: application/json',
+        );
+
+        $data = array(
+            'added_by_uuid' => $this->adminSecret,
+            'comment' => $comment,
+            'current_usage_GB' => 0,
+            'last_online' => null,
+            'last_reset_time' => null,
+            'mode' => 'no_reset',
+            'name' => $name,
+            'package_days' => $package_days,
+            'start_date' => date('Y-m-d'),
+            'telegram_id' => $telegram_id,
+            'usage_limit_GB' => $package_size,
+            'uuid' => $this->generateRandomUUID()
+        );
+
+        $data_string = json_encode($data);
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+
+        $result = json_decode(curl_exec($ch), true);
+        curl_close($ch);
+
+        $retVal = ($result['status'] == 200) ? true : false;
+
+        return $retVal;
+    }
+
+    private function findElementByUuid($data, $uuid)
+    {
+        foreach ($data as $value) {
+            if ($value['uuid'] == $uuid) {
+                return $value;
+            }
+        }
+        return null;
+    }
+    private function getDataFromSub(string $uuid): array
+    {
+        $url = $this->urlUser . $uuid . '/all.txt';
+
         $raw_data = file_get_contents($url);
-
-
         // Extract days and GB remaining
         preg_match('/([0-9.]+)GB_Remain:([0-9]+)days/', $raw_data, $matches);
         $info = [
@@ -45,104 +133,21 @@ class hiddifyApi
                 $servers[] = $line;
             }
         }
-        $user = [
+        $data = [
             'info' => $info,
             'server' => $servers
         ];
 
-        return $user;
+        return $data;
     }
 
-    public function getcrftoken(): string
+    public function getUserdetais($uuid)
     {
-        // Load the HTML content into a DOMDocument object
-        $url = $this->mainUrl . '/' . $this->path . '/' . $this->adminPath . '/admin/user/';
+        $url = $this->urlAdmin . 'api/v1/user/';
+        $data = json_decode(file_get_contents($url), true);
+        $userdata = $this->findElementByUuid($data, $uuid);
+        $userdata['subData'] = $this->getDataFromSub($uuid);
 
-        $html = file_get_contents($url);
-        $doc = new DOMDocument();
-        $doc->loadHTML($html);
-
-        // Create a DOMXPath object and use it to query the document for the csrf_token input field
-        $xpath = new DOMXPath($doc);
-        $input = $xpath->query('//input[@name="csrf_token"]')->item(0);
-
-        // Get the value of the csrf_token input field
-        $csrfToken = $input->getAttribute('value');
-
-        // Output the value of the csrf_token input field
-        return $csrfToken;
-    }
-
-    public function adduser(string $uuid, string $name, int $usage_limit_GB, int $package_days, string $comment = ''): void
-    {
-        $url = $this->mainUrl . '/' . $this->path . '/' . $this->adminPath . '/admin/user/new/';
-
-        $formData = array(
-            'csrf_token' => $this->getcrftoken(),
-            'uuid' => $uuid,
-            'name' => $name,
-            'usage_limit_GB' => $usage_limit_GB,
-            'package_days' => $package_days,
-            'mode' => 'no_reset',
-            'comment' => $comment,
-            'enable' => 'y',
-            'reset_days' => '',
-            'reset_usage' => ''
-        );
-        var_dump($formData, $url);
-        // Initialize a cURL session
-        $ch = curl_init();
-
-        // Set the cURL options
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $formData);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-
-        curl_exec($ch);
-        // Close the cURL session
-        curl_close($ch);
-    }
-
-    public function getUserList(): array
-    {
-        $url = $this->mainUrl . '/' . $this->path . '/' . $this->adminPath . '/admin/user/';
-        $htmlContent = file_get_contents($url);
-
-        $DOM = new DOMDocument();
-        $DOM->loadHTML($htmlContent);
-
-        $Header = $DOM->getElementsByTagName('th');
-        $Detail = $DOM->getElementsByTagName('td');
-
-        //#Get header name of the table
-        foreach ($Header as $NodeHeader) {
-            $aDataTableHeaderHTML[] = trim($NodeHeader->textContent);
-        }
-        //print_r($aDataTableHeaderHTML); die();
-
-        //#Get row data/detail table without header name as key
-        $i = 0;
-        $j = 0;
-        foreach ($Detail as $sNodeDetail) {
-            $aDataTableDetailHTML[$j][] = trim($sNodeDetail->textContent);
-            $i = $i + 1;
-            $j = $i % count($aDataTableHeaderHTML) == 0 ? $j + 1 : $j;
-        }
-        //print_r($aDataTableDetailHTML); die();
-
-        //#Get row data/detail table with header name as key and outer array index as row number
-        for ($i = 0; $i < count($aDataTableDetailHTML); $i++) {
-            for ($j = 0; $j < count($aDataTableHeaderHTML); $j++) {
-                $aTempData[$i][$aDataTableHeaderHTML[$j]] = $aDataTableDetailHTML[$i][$j];
-            }
-        }
-        $aDataTableDetailHTML = $aTempData;
-        unset($aTempData);
-        return ($aDataTableDetailHTML);
+        return $userdata;
     }
 }
-
-$api = new hiddifyApi('https://domain.com', '', '');
-var_dump($api);
-

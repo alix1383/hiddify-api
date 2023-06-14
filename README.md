@@ -1,21 +1,40 @@
 # hiddify-api
 
-## 💡 TODO:
-``API``
+## 💡 Usage :
 
-  - [x]  Get User List(Can`t show page 1<)
-  - [x]  Add User 
-  - [x]  Get system stats 
-  - [x]  Get user details
-  - soon ...  
+``` php
+<?php
 
-``MISC`` 
-  - [ ] better error handling
-  - [ ] DOCs
+include('api.php');
+
+$api = new hiddifyApi(
+    '', //! https://domain.com
+    '', //! hiddify hidden path
+    '' //! admin secret
+);
+
+$api->is_connected(); // return bool
+
+$api->getSystemStats(); // return array
 
 
-## 🤝 Contributing:
+/////----------- USER API -----------\\\\\
+
+$api->user->addUser(string $name,
+                    int $package_days = 30,
+                    int $package_size = 30,
+                    ?string $telegram_id = null,
+                    ?string $comment = null); // return bool
+
+$api->user->getUserList(); // return array
+
+$api->user->getUserdetais(string $uuid); // return array
+
+?>
+```
+
+## 🤝 Contributing :
 Contributions to this project are always welcome! Feel free to submit a pull request or create an issue if you encounter any problems.
 
-## 📃 License:
+## 📃 License :
 This project is licensed under the MIT License. See the [LICENSE](https://github.com/alix1383/hiddify-api/blob/main/LICENSE) file for more information.
