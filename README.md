@@ -1,5 +1,8 @@
 <h1>Hiddify-PHP-API</h1>
 
+![GitHub all releases](https://img.shields.io/github/downloads/alix1383/hiddify-api/total?style=for-the-badge)
+![GitHub repo size](https://img.shields.io/github/repo-size/alix1383/hiddify-api?style=for-the-badge)
+
 #### This is a third-party library for [Hiddify](https://github.com/hiddify)
 
 ## 💡 Usage :
