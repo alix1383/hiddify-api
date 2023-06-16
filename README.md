@@ -6,12 +6,14 @@
 
 <br>
 
-
 ## 📑 TODO :
 
-- support more language 
-  - [ ] python 🐍
+  - support more language 
+    - [x] PHP
+    - [ ] Python 🐍
+    - [ ] NodeJS
 
+<br>
 
 ## 💡 Usage :
 
