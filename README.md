@@ -10,8 +10,8 @@
 
   - support more language 
     - [x] PHP 🐘 [Code](https://github.com/alix1383/hiddify-api/blob/main/api.php) | [Doc](https://github.com/alix1383/hiddify-api#-usage-)
-    - [ ] Python 🐍
-    - [ ] NodeJS ✨
+    - [ ] Python 🐍 *need help 
+    - [ ] NodeJS ✨ *need help
 
 <br>
 
