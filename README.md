@@ -9,9 +9,9 @@
 ## 📑 TODO :
 
   - support more language 
-    - [x] PHP
+    - [x] PHP 🐘
     - [ ] Python 🐍
-    - [ ] NodeJS
+    - [ ] NodeJS ✨
 
 <br>
 
