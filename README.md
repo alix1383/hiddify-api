@@ -9,7 +9,7 @@
 ## 📑 TODO :
 
   - support more language 
-    - [x] PHP 🐘 [Code]([https://github.com/hiddify](https://github.com/alix1383/hiddify-api/blob/main/api.php)) [Doc]([https://github.com/hiddify](https://github.com/alix1383/hiddify-api/tree/main#-usage-))
+    - [x] PHP 🐘
     - [ ] Python 🐍
     - [ ] NodeJS ✨
 
