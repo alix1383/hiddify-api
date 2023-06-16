@@ -1,4 +1,4 @@
-<h1>Hiddify-PHP-API</h1>
+<h1>Hiddify-API</h1>
 
 ![GitHub repo size](https://img.shields.io/github/repo-size/alix1383/hiddify-api?style=for-the-badge)
 
