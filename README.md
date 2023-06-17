@@ -26,7 +26,8 @@ include('api.php');
 $api = new hiddifyApi(
     '', //! https://domain.com
     '', //! hiddify hidden path
-    '' //! admin secret
+    '', //! admin secret
+    ''  //! Reset Mode  'no_reset' | 'monthly' | 'weekly' | 'daily'
 );
 
 $api->is_connected(); // return bool

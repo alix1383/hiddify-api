@@ -42,6 +42,26 @@ class hiddifyApi
         $data[8] = chr(ord($data[8]) & 0x3f | 0x80);
         return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($data), 4));
     }
+
+    protected function getcrftoken(string $path): string
+    {
+        // Load the HTML content into a DOMDocument object
+        $url = $this->urlAdmin . $path; // 
+
+        $html = file_get_contents($url);
+        $doc = new DOMDocument();
+        $doc->loadHTML($html);
+
+        // Create a DOMXPath object and use it to query the document for the csrf_token input field
+        $xpath = new DOMXPath($doc);
+        $input = $xpath->query('//input[@name="csrf_token"]')->item(0);
+
+        // Get the value of the csrf_token input field
+        $csrfToken = $input->getAttribute('value');
+
+        // Output the value of the csrf_token input field
+        return $csrfToken;
+    }
 }
 
 
@@ -63,7 +83,7 @@ class User extends hiddifyApi
         return $data;
     }
 
-    public function addUser(string $name, int $package_days = 30, int $package_size = 30, string $telegram_id = null, string $comment = null)
+    public function addUser(string $name, int $package_days = 30, int $package_size = 30, string $telegram_id = null, string $comment = null, string $resetMod = 'no_reset')
     {
         $url = $this->urlAdmin . 'api/v1/user/';
 
@@ -78,7 +98,7 @@ class User extends hiddifyApi
             'current_usage_GB' => 0,
             'last_online' => null,
             'last_reset_time' => null,
-            'mode' => 'no_reset',
+            'mode' => $resetMod,
             'name' => $name,
             'package_days' => $package_days,
             'start_date' => date('Y-m-d'),
@@ -103,7 +123,7 @@ class User extends hiddifyApi
         return $retVal;
     }
 
-    private function findElementByUuid($data, $uuid)
+    private function findElementByUuid(mixed $data, string $uuid)
     {
         foreach ($data as $value) {
             if ($value['uuid'] == $uuid) {
@@ -141,7 +161,7 @@ class User extends hiddifyApi
         return $data;
     }
 
-    public function getUserdetais($uuid)
+    public function getUserdetais(string $uuid)
     {
         $url = $this->urlAdmin . 'api/v1/user/';
         $data = json_decode(file_get_contents($url), true);
