@@ -1,13 +1,10 @@
 <?php
 class hiddifyApi
 {
-    private $mainUrl, $path, $adminPath;
-    protected $urlUser, $urlAdmin;
-    public $user;
+    protected $urlUser, $urlAdmin, $user;
 
     function __construct($mainUrl, $path, $adminSecret)
     {
-
         $this->urlUser = $mainUrl . '/' . $path . '/';
         $this->urlAdmin = $mainUrl . '/' . $path . '/' . $adminSecret . '/';
 
@@ -25,7 +22,6 @@ class hiddifyApi
     public function getSystemStats($ret_json = false): mixed
     {
         $url = $this->urlAdmin . 'admin/get_data/';
-
         if ($ret_json == true) {
             $response = file_get_contents($url);
             return $response;
@@ -42,7 +38,7 @@ class hiddifyApi
         $data[8] = chr(ord($data[8]) & 0x3f | 0x80);
         return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($data), 4));
     }
-
+    /* 
     protected function getcrftoken(string $path): string
     {
         // Load the HTML content into a DOMDocument object
@@ -62,8 +58,8 @@ class hiddifyApi
         // Output the value of the csrf_token input field
         return $csrfToken;
     }
+    */
 }
-
 
 class User extends hiddifyApi
 {
@@ -114,7 +110,6 @@ class User extends hiddifyApi
         curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-
         $result = json_decode(curl_exec($ch), true);
         curl_close($ch);
 
@@ -132,6 +127,7 @@ class User extends hiddifyApi
         }
         return null;
     }
+
     private function getDataFromSub(string $uuid): array
     {
         $url = $this->urlUser . $uuid . '/all.txt';
