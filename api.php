@@ -79,8 +79,14 @@ class User extends hiddifyApi
         return $data;
     }
 
-    public function addUser(string $name, int $package_days = 30, int $package_size = 30, string $telegram_id = null, string $comment = null, string $resetMod = 'no_reset')
-    {
+    public function addUser(
+        string $name,
+        int $package_days = 30,
+        int $package_size = 30,
+        string $telegram_id = null,
+        string $comment = null,
+        string $resetMod = 'no_reset'
+    ) {
         $url = $this->urlAdmin . 'api/v1/user/';
 
         $headers = array(
