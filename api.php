@@ -137,12 +137,12 @@ class User extends hiddifyApi
 
     private function getDataFromSub(string $uuid): array
     {
-        $url = $this->urlUser . $uuid . '/all.txt';
+        $url = $this->urlUser . $uuid;
         $info = null;
 
 
         // Extract days and GB remaining
-        $raw_data = file_get_contents($url);
+        $raw_data = file_get_contents($url . '/all.txt');
         if (preg_match('/([0-9.]+)GB_Remain:([0-9]+)days/', $raw_data, $matches)) {
             $info = [
                 'GB_Remain' => (float) $matches[1],
