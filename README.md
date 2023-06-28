@@ -1,7 +1,5 @@
 # Hiddify-API
 
-![GitHub repo size](https://img.shields.io/github/repo-size/alix1383/hiddify-api?style=for-the-badge)
-
 ### This is a third-party library For [Hiddify](https://github.com/hiddify)
 
 <br>
