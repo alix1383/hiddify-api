@@ -55,16 +55,16 @@ $api->getSystemStats(); // return array
 
 /////----------- USER API -----------\\\\\
 
-$api->user->addUser(string $name,
+$api->User->addUser(string $name,
                     int $package_days = 30,
                     int $package_size = 30,
                     ?string $telegram_id = null,
                     ?string $comment = null
                     string $resetMod = 'no_reset' //# 'no_reset' | 'monthly' | 'weekly' | 'daily' ); //return bool
 
-$api->user->getUserList(); // return array
+$api->User->getUserList(); // return array
 
-$api->user->getUserdetais(string $uuid); // return array
+$api->User->getUserdetais(string $uuid); // return array
 
 ?>
 ```

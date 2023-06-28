@@ -1,14 +1,15 @@
 <?php
 class hiddifyApi
 {
-    protected $urlUser, $urlAdmin, $user;
+    protected $urlUser, $urlAdmin;
+    public $User;
 
     function __construct($mainUrl, $path, $adminSecret)
     {
         $this->urlUser = $mainUrl . '/' . $path . '/';
         $this->urlAdmin = $mainUrl . '/' . $path . '/' . $adminSecret . '/';
 
-        $this->user = new User($mainUrl, $path, $adminSecret);
+        $this->User = new User($mainUrl, $path, $adminSecret);
     }
 
     public function is_connected(): bool
@@ -137,14 +138,17 @@ class User extends hiddifyApi
     private function getDataFromSub(string $uuid): array
     {
         $url = $this->urlUser . $uuid . '/all.txt';
+        $info = null;
 
-        $raw_data = file_get_contents($url);
+
         // Extract days and GB remaining
-        preg_match('/([0-9.]+)GB_Remain:([0-9]+)days/', $raw_data, $matches);
-        $info = [
-            'GB_Remain' => (float) $matches[1],
-            'days' => (int) $matches[2],
-        ];
+        $raw_data = file_get_contents($url);
+        if (preg_match('/([0-9.]+)GB_Remain:([0-9]+)days/', $raw_data, $matches)) {
+            $info = [
+                'GB_Remain' => (float) $matches[1],
+                'days' => (int) $matches[2],
+            ];
+        }
 
         // Import vless & vemss & trojan servers to array
         $servers = [];
