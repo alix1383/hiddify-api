@@ -20,16 +20,11 @@ class hiddifyApi
         return $retVal;
     }
 
-    public function getSystemStats($ret_json = false): mixed
+    public function getSystemStats(): array
     {
         $url = $this->urlAdmin . 'admin/get_data/';
-        if ($ret_json == true) {
-            $response = file_get_contents($url);
-            return $response;
-        } else {
-            $response = json_decode(file_get_contents($url), true);
-            return $response['stats'];
-        }
+        $response = json_decode(file_get_contents($url), true);
+        return $response['stats'];
     }
 
     protected function generateRandomUUID(): string
@@ -95,6 +90,8 @@ class User extends hiddifyApi
             'Content-Type: application/json',
         );
 
+        $uuid = $this->generateRandomUUID();
+
         $data = array(
             'added_by_uuid' => $this->adminSecret,
             'comment' => $comment,
@@ -107,7 +104,7 @@ class User extends hiddifyApi
             'start_date' => date('Y-m-d'),
             'telegram_id' => $telegram_id,
             'usage_limit_GB' => $package_size,
-            'uuid' => $this->generateRandomUUID()
+            'uuid' => $uuid
         );
 
         $data_string = json_encode($data);
@@ -120,12 +117,14 @@ class User extends hiddifyApi
         $result = json_decode(curl_exec($ch), true);
         curl_close($ch);
 
-        $retVal = ($result['status'] == 200) ? true : false;
-
-        return $retVal;
+        if ($result['status'] == 200) {
+            return $uuid;
+        } else {
+            return false;
+        }
     }
 
-    private function findElementByUuid(mixed $data, string $uuid)
+    private function findElementByUuid(array $data, string $uuid)
     {
         foreach ($data as $value) {
             if ($value['uuid'] == $uuid) {
@@ -139,7 +138,6 @@ class User extends hiddifyApi
     {
         $url = $this->urlUser . $uuid;
         $info = null;
-
 
         // Extract days and GB remaining
         $raw_data = file_get_contents($url . '/all.txt');
@@ -167,7 +165,7 @@ class User extends hiddifyApi
         return $data;
     }
 
-    public function getUserdetais(string $uuid)
+    public function getUserdetais(string $uuid): array
     {
         $url = $this->urlAdmin . 'api/v1/user/';
         $data = json_decode(file_get_contents($url), true);

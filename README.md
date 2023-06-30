@@ -58,7 +58,7 @@ $api->User->addUser(string $name,
                     int $package_size = 30,
                     ?string $telegram_id = null,
                     ?string $comment = null
-                    string $resetMod = 'no_reset' //# 'no_reset' | 'monthly' | 'weekly' | 'daily' ); //return bool
+                    string $resetMod = 'no_reset'); //! if success return user uuid else return false 
 
 $api->User->getUserList(); // return array
 
