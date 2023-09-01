@@ -15,7 +15,14 @@ class hiddifyApi
     public function is_connected(): bool
     {
         $url = $this->urlAdmin . 'admin/get_data/';
-        $response = json_decode(file_get_contents($url), true);
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_URL, $url);
+        $result = curl_exec($ch);
+        curl_close($ch);
+
+        $response = json_decode($result, true);
         $retVal = (is_array($response)) ? true : false;
         return $retVal;
     }
@@ -23,7 +30,14 @@ class hiddifyApi
     public function getSystemStats(): array
     {
         $url = $this->urlAdmin . 'admin/get_data/';
-        $response = json_decode(file_get_contents($url), true);
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_URL, $url);
+        $result = curl_exec($ch);
+        curl_close($ch);
+        
+        $response = json_decode($result, true);
         return $response['stats'];
     }
 
@@ -71,7 +85,14 @@ class User extends hiddifyApi
     public function getUserList(): array
     {
         $url = $this->urlAdmin . 'api/v1/user/';
-        $data = json_decode(file_get_contents($url), true);
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_URL, $url);
+        $result = curl_exec($ch);
+        curl_close($ch);
+
+        $data = json_decode($result, true);
         return $data;
     }
 
@@ -82,7 +103,7 @@ class User extends hiddifyApi
         string $telegram_id = null,
         string $comment = null,
         string $resetMod = 'no_reset'
-    ) {
+    ): string | bool {
         $url = $this->urlAdmin . 'api/v1/user/';
 
         $headers = array(
@@ -117,7 +138,7 @@ class User extends hiddifyApi
         $result = json_decode(curl_exec($ch), true);
         curl_close($ch);
 
-        if ($result['status'] == 200) {
+        if ($result == null) {
             return $uuid;
         } else {
             return false;
@@ -140,7 +161,12 @@ class User extends hiddifyApi
         $info = null;
 
         // Extract days and GB remaining
-        $raw_data = file_get_contents($url . '/all.txt');
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_URL, $url . '/all.txt');
+        $raw_data = curl_exec($ch);
+        curl_close($ch);
+
         if (preg_match('/([0-9.]+)GB_Remain:([0-9]+)days/', $raw_data, $matches)) {
             $info = [
                 'GB_Remain' => (float) $matches[1],
@@ -168,7 +194,14 @@ class User extends hiddifyApi
     public function getUserdetais(string $uuid): array
     {
         $url = $this->urlAdmin . 'api/v1/user/';
-        $data = json_decode(file_get_contents($url), true);
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_URL, $url);
+        $result = curl_exec($ch);
+        curl_close($ch);
+
+        $data = json_decode($result, true);
         $userdata = $this->findElementByUuid($data, $uuid);
         $userdata['subData'] = $this->getDataFromSub($uuid);
 
