@@ -158,22 +158,15 @@ class User extends hiddifyApi
     private function getDataFromSub(string $uuid): array
     {
         $url = $this->urlUser . $uuid;
-        $info = null;
 
         // Extract days and GB remaining
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_URL, $url . '/all.txt');
+        curl_setopt($ch, CURLOPT_URL, $url . '/sub/');
+        curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0');
         $raw_data = curl_exec($ch);
         curl_close($ch);
-
-        if (preg_match('/([0-9.]+)GB_Remain:([0-9]+)days/', $raw_data, $matches)) {
-            $info = [
-                'GB_Remain' => (float) $matches[1],
-                'days' => (int) $matches[2],
-            ];
-        }
-
+        
         // Import vless & vemss & trojan servers to array
         $servers = [];
         $lines = explode("\n", $raw_data);
@@ -183,12 +176,8 @@ class User extends hiddifyApi
                 $servers[] = $line;
             }
         }
-        $data = [
-            'info' => $info,
-            'server' => $servers
-        ];
 
-        return $data;
+        return $servers;
     }
 
     public function getUserdetais(string $uuid): array
