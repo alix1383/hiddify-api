@@ -1,4 +1,9 @@
 <?php
+
+if (version_compare(phpversion(), "8.0.0", "<=")) {
+    die('Use PHP 8 or later :) Stay Updated');
+}
+
 class hiddifyApi
 {
     protected $urlUser, $urlAdmin;
@@ -36,7 +41,7 @@ class hiddifyApi
         curl_setopt($ch, CURLOPT_URL, $url);
         $result = curl_exec($ch);
         curl_close($ch);
-        
+
         $response = json_decode($result, true);
         return $response['stats'];
     }
@@ -166,7 +171,7 @@ class User extends hiddifyApi
         curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0');
         $raw_data = curl_exec($ch);
         curl_close($ch);
-        
+
         // Import vless & vemss & trojan servers to array
         $servers = [];
         $lines = explode("\n", $raw_data);
