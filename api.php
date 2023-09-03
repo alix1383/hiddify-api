@@ -143,7 +143,7 @@ class User extends hiddifyApi
         $result = json_decode(curl_exec($ch), true);
         curl_close($ch);
 
-        if ($result == null) {
+        if ($result != null) {
             return $uuid;
         } else {
             return false;
