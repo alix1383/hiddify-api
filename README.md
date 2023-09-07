@@ -25,8 +25,8 @@
 
 - ### Support More Language
 
-  - [x] PHP 🐘 [Code](https://github.com/alix1383/hiddify-api/blob/main/php/api.php) | [Doc](https://github.com/alix1383/hiddify-api#-usage-)
-  - [x] NodeJS ✨ [Code](https://github.com/alix1383/hiddify-api/blob/main/api.php) | [Doc](https://github.com/alix1383/hiddify-api#-usage-nodejs-)
+  - [x] PHP 🐘 [Code](https://github.com/alix1383/hiddify-api/blob/main/php/api.php) | [Doc](https://github.com/alix1383/hiddify-api#-usage-php-)
+  - [x] NodeJS ✨ [Code](https://github.com/alix1383/hiddify-api/blob/main/api.php) | [Doc](https://github.com/alix1383/hiddify-api#-usage-node-js-) By <b>Mr_artan</b> [Telegram](https://t.me/mr_saebi)
   - [ ] Python 🐍 \*need help
   - MORE...
 
