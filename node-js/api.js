@@ -13,7 +13,7 @@ class hiddifyApi {
   constructor() {
     this.adminSecret = process.env.ADMINSECRET;
     this.axios = axios.create({
-      baseURL: process.env.MAIN_URL + "/" + process.env.PATH + "/" + process.env.ADMINSECRET,
+      baseURL: process.env.MAIN_URL + "/" + process.env.PATHS + "/" + process.env.ADMINSECRET,
     });
     this.axios.defaults.headers.common["Accept"] = "application/json";
     this.axios.defaults.headers.post["Content-Type"] = "application/json";
