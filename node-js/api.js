@@ -95,7 +95,7 @@ class hiddifyApi {
   // find servise
   async findServise(uuid) {
     // get all data
-    const { data } = await this.getUserList();
+    const data = await this.getUserList();
     // search to data
     const userData = data.find((e) => e.uuid == uuid);
     if (!userData) return false;
